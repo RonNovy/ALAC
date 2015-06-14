@@ -127,7 +127,7 @@ int32_t main (int32_t argc, char * argv[])
         theError = GetInputFormat(inputFile, &inputFormat, &inputFileType);
         if (theError)
         {
-            fprintf(stderr," Cannot determine what format file \"%s\" is\n", inputFileName);
+            fprintf(stderr," Cannot determine what format file \"%s\" is or the format is not supported.\n", inputFileName);
             exit (1);            
         }
         
@@ -200,17 +200,17 @@ int32_t GetInputFormat(FILE * inputFile, AudioFormatDescription * theInputFormat
 
     fread(theReadBuffer, 1, 4, inputFile);
     
-    if (theReadBuffer[0] == 'c' && theReadBuffer[1] == 'a' && theReadBuffer[2] == 'f'  & theReadBuffer[3] == 'f')
+    if (theReadBuffer[0] == 'c' && theReadBuffer[1] == 'a' && theReadBuffer[2] == 'f' && theReadBuffer[3] == 'f')
     {
         // It's a caff file!
         *theFileType = 'caff';
         // We support pcm data for encode and alac data for decode
         done = GetCAFFdescFormat(inputFile, theInputFormat);
     }
-    else if (theReadBuffer[0] == 'R' && theReadBuffer[1] == 'I' && theReadBuffer[2] == 'F'  & theReadBuffer[3] == 'F')
+    else if (theReadBuffer[0] == 'R' && theReadBuffer[1] == 'I' && theReadBuffer[2] == 'F' && theReadBuffer[3] == 'F')
     {
         fread(theReadBuffer, 1, 8, inputFile);
-        if (theReadBuffer[4] == 'W' && theReadBuffer[5] == 'A' && theReadBuffer[6] == 'V'  & theReadBuffer[7] == 'E')
+        if (theReadBuffer[4] == 'W' && theReadBuffer[5] == 'A' && theReadBuffer[6] == 'V' && theReadBuffer[7] == 'E')
         {
             // It's a WAVE file!
             *theFileType = 'WAVE';
@@ -236,6 +236,12 @@ int32_t GetInputFormat(FILE * inputFile, AudioFormatDescription * theInputFormat
                         theSampleRate = ((int32_t)(theReadBuffer[11]) << 24) + ((int32_t)(theReadBuffer[10]) << 16) + ((int32_t)(theReadBuffer[9]) << 8) + theReadBuffer[8];
                         theInputFormat->mSampleRate = theSampleRate;
                         theInputFormat->mBitsPerChannel = theReadBuffer[18];
+						if (((theInputFormat->mBitsPerChannel + 7) / 8) == 1)
+						{
+							// we only support > 8 bits.
+							*theFileType = 0; // clear it
+							return -1;
+						}
                         theInputFormat->mFormatFlags = kALACFormatFlagIsSignedInteger | kALACFormatFlagIsPacked; // always little endian
                         theInputFormat->mBytesPerPacket = theInputFormat->mBytesPerFrame = (theInputFormat->mBitsPerChannel >> 3) * theInputFormat->mChannelsPerFrame;
                         theInputFormat->mFramesPerPacket = 1;
