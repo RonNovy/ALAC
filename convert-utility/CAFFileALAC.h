@@ -20,7 +20,7 @@
 #ifndef _CAFFilePortable_h
 #define _CAFFilePortable_h
 
-#if TARGET_OS_WIN32
+#if TARGET_OS_WIN32 || defined(_WIN32)
 #define ATTRIBUTE_PACKED
 #pragma pack(push, 1)
 #else
@@ -200,7 +200,7 @@ int32_t GetMagicCookieFromCAFFkuki(FILE * inputFile, uint8_t * outMagicCookie, u
 bool FindCAFFDataStart(FILE * inputFile, int32_t * dataPos, int32_t * dataSize);
 bool GetCAFFdescFormat(FILE * inputFile, AudioFormatDescription * theInputFormat);
 
-#if TARGET_OS_WIN32
+#if TARGET_OS_WIN32 || defined(_WIN32)
 #pragma pack(pop)
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////////////

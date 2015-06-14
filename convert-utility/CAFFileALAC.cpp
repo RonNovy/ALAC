@@ -265,7 +265,7 @@ int32_t BuildBasePacketTable(AudioFormatDescription theInputFormat, int32_t inpu
     thePacketTableHeader->mNumberValidFrames = inputDataSize/((theInputFormat.mBitsPerChannel >> 3) * theInputFormat.mChannelsPerFrame);
     thePacketTableHeader->mNumberPackets = thePacketTableHeader->mNumberValidFrames/kALACDefaultFramesPerPacket;
     thePacketTableHeader->mPrimingFrames = 0;
-    thePacketTableHeader->mRemainderFrames = thePacketTableHeader->mNumberValidFrames - thePacketTableHeader->mNumberPackets * kALACDefaultFramesPerPacket;
+    thePacketTableHeader->mRemainderFrames = (int32_t) thePacketTableHeader->mNumberValidFrames - thePacketTableHeader->mNumberPackets * kALACDefaultFramesPerPacket;
     thePacketTableHeader->mRemainderFrames = kALACDefaultFramesPerPacket - thePacketTableHeader->mRemainderFrames;
     if (thePacketTableHeader->mRemainderFrames) thePacketTableHeader->mNumberPackets += 1;
     

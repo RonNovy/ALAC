@@ -435,11 +435,11 @@ int32_t ALACEncoder::EncodeStereo( BitBuffer * bitstream, void * inputBuffer, ui
 	}
 
 	// test for escape hatch if best calculated compressed size turns out to be more than the input size
-	minBits = minBits1 + minBits2 + (8 /* mixRes/maxRes/etc. */ * 8) + ((partialFrame == true) ? 32 : 0);
+	minBits = minBits1 + minBits2 + (8 /* mixRes/maxRes/etc. */ * 8) + ((partialFrame != 0) ? 32 : 0);
 	if ( bytesShifted != 0 )
 		minBits += (numSamples * (bytesShifted * 8) * 2);
 
-	escapeBits = (numSamples * mBitDepth * 2) + ((partialFrame == true) ? 32 : 0) + (2 * 8);	/* 2 common header bytes */
+	escapeBits = (numSamples * mBitDepth * 2) + ((partialFrame != 0) ? 32 : 0) + (2 * 8);	/* 2 common header bytes */
 
 	doEscape = (minBits >= escapeBits) ? true : false;
 
@@ -683,11 +683,11 @@ int32_t ALACEncoder::EncodeStereoFast( BitBuffer * bitstream, void * inputBuffer
 	minBits2 = bits2 + (numV * sizeof(int16_t) * 8);
 
 	// test for escape hatch if best calculated compressed size turns out to be more than the input size
-	minBits = minBits1 + minBits2 + (8 /* mixRes/maxRes/etc. */ * 8) + ((partialFrame == true) ? 32 : 0);
+	minBits = minBits1 + minBits2 + (8 /* mixRes/maxRes/etc. */ * 8) + ((partialFrame != 0) ? 32 : 0);
 	if ( bytesShifted != 0 )
 		minBits += (numSamples * (bytesShifted * 8) * 2);
 
-	escapeBits = (numSamples * mBitDepth * 2) + ((partialFrame == true) ? 32 : 0) + (2 * 8);	/* 2 common header bytes */
+	escapeBits = (numSamples * mBitDepth * 2) + ((partialFrame != 0) ? 32 : 0) + (2 * 8);	/* 2 common header bytes */
 
 	doEscape = (minBits >= escapeBits) ? true : false;
 
@@ -917,11 +917,11 @@ int32_t ALACEncoder::EncodeMono( BitBuffer * bitstream, void * inputBuffer, uint
 
 	// test for escape hatch if best calculated compressed size turns out to be more than the input size
 	// - first, add bits for the header bytes mixRes/maxRes/shiftU/filterU
-	minBits += (4 /* mixRes/maxRes/etc. */ * 8) + ((partialFrame == true) ? 32 : 0);
+	minBits += (4 /* mixRes/maxRes/etc. */ * 8) + ((partialFrame != 0) ? 32 : 0);
 	if ( bytesShifted != 0 )
 		minBits += (numSamples * (bytesShifted * 8));
 
-	escapeBits = (numSamples * mBitDepth) + ((partialFrame == true) ? 32 : 0) + (2 * 8);	/* 2 common header bytes */
+	escapeBits = (numSamples * mBitDepth) + ((partialFrame != 0) ? 32 : 0) + (2 * 8);	/* 2 common header bytes */
 
 	doEscape = (minBits >= escapeBits) ? true : false;
 
@@ -1252,7 +1252,7 @@ int32_t ALACEncoder::InitializeEncoder(AudioFormatDescription theOutputFormat)
 {
 	int32_t			status;
     
-    mOutputSampleRate = theOutputFormat.mSampleRate;
+    mOutputSampleRate = (uint32_t)theOutputFormat.mSampleRate;
     mNumChannels = theOutputFormat.mChannelsPerFrame;
     switch(theOutputFormat.mFormatFlags)
     {

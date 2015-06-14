@@ -38,7 +38,7 @@
 #define TARGET_RT_LITTLE_ENDIAN 1
 #elif defined(__x86_64__)
 #define TARGET_RT_LITTLE_ENDIAN 1
-#elif defined (TARGET_OS_WIN32)
+#elif defined (TARGET_OS_WIN32) || defined(_WIN32)
 #define TARGET_RT_LITTLE_ENDIAN 1
 #endif
 
